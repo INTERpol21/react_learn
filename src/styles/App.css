@@ -13,13 +13,27 @@
   width: 800px;
 }
 
+.post {
+  display: flex;
+  padding: 15px;
+  margin-top: 15px;
+  justify-content: space-between;
+  align-items: center;
+  border: 5px solid teal;
+}
 
-.post{
-    display: flex;
-    padding: 15px;
-    margin-top: 15px;
-    justify-content: space-between;
-    align-items: center;
-    border: 5px solid teal;
+.post-enter {
+  transform: translateX(-400px);
+}
+.post-enter-active {
+  transform: translateX(0px);
+  transition: all linear 0.6s;
+}
+.post-exit {
+  opacity: 1;
+}
+.post-exit-active {
+  transform: translateX(-400px);
+  transition: all linear 0.6s;
 }
 
