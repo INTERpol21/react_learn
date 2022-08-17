@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useState } from "react";
+import React, { useRef, useMemo, useState, useEffect } from "react";
 import Counter from "./components/Counter";
 import ClassCounter from "./components/ClassCounter";
 import ReactDOM from "react-dom";
@@ -15,15 +15,15 @@ import MySelect from "./components/UI/select/MySelect";
 import PostFilter from "./components/PostFilter";
 import MyModal from "./components/UI/MyModal/MyModal";
 import { usePosts } from "./hooks/usePosts";
+import axios from "axios";
+import PostService from "./API/PostService";
+import Loader from "./components/UI/Loader/Loader";
+import { useFetching } from "./hooks/useFetching";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function App() {
-  const [posts, setPosts] = useState([
-    { id: 1, title: "JavaScript", body: "Description" },
-    { id: 2, title: "JavaScript 2", body: "Description" },
-    { id: 3, title: "JavaScript 3", body: "Description" },
-  ]);
+  const [posts, setPosts] = useState([]);
 
   //Двухстороннее связывание через title. Управляемый Input
   // const [title, setTitle] = useState('');
@@ -38,8 +38,20 @@ function App() {
   const [filter, setFilter] = useState({ sort: '', query: '' });
   //состояние видимости окна 
   const [modal, setModal] = useState(false);
-  //Кастомные hooks
+  //Кастомные hooks декомпозиция 
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
+  //Кастомный хук отвечающий за загрузку и отлов ошибок
+  const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
+    const posts = await PostService.getAll();
+    setPosts(posts);
+  })
+
+
+
+  useEffect(() => {
+    fetchPosts()
+  }, []);
+
 
 
   //Теперь можно использовать этот компонент создания постов !
@@ -47,6 +59,9 @@ function App() {
     setPosts([...posts, newPost]);
     setModal(false)
   };
+
+  
+
   //По той же тактике что и с созданием постов, получаем post из дочернего компонента
   //Прокидываем компонент на PostList и PostItem
   const removePost = (post) => {
@@ -57,7 +72,8 @@ function App() {
 
   return (
     <div className="App">
-      <MyButton style={{marginTop: 30 }} onClick={() => setModal(true)}>
+      <button onClick={fetchPosts}>Get posts</button>
+      <MyButton style={{ marginTop: 30 }} onClick={() => setModal(true)}>
         Создать пост
       </MyButton>
       <MyModal visible={modal} setVisible={setModal}>
@@ -65,19 +81,27 @@ function App() {
       </MyModal>
 
       {/* Так как нельзя передавать на прямую из дочернего в родителя, создаем callback */}
-      
+
       <hr style={{ margin: "15px 0" }} />
-      <PostFilter filter={filter} setFilter={setFilter} />
+      <PostFilter filter={filter} setFilter={setFilter}/>
 
       {/* Условная отрисовка, что бы при отсутствии постов выпадала надпись//Перенес в PostList  */}
       {/* {sortedAndSearchedPosts.length ? ( */}
       {/* //После выполнения условия, выполняется тернарный оператор ? : */}
-      <PostList
-        remove={removePost}
+      {postError &&
+        <h1>Произошла ошибка ${postError}</h1>
+      }
+      {isPostsLoading ? (
+        <div style={{display:'flex', justifyContent:'center', marginTop:50 }}><Loader/></div>
+      ) : (
         //передаем отфильтрованный и отсортированный массив
-        posts={sortedAndSearchedPosts}
-        title="Посты про JS"
-      />
+        <PostList
+          remove={removePost}
+          posts={sortedAndSearchedPosts}
+          title="Посты про JS"
+        />
+      )}
+
       {/* ) : (
         <h1 style={{ textAlign: "center" }}>Посты не найдены.</h1>
       )} */}
