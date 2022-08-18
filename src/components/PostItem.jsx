@@ -7,7 +7,7 @@ const PostItem = (props) => {
       <div className="post__content">
 
         {/* Вместо id поста выводим number. Смотреть PostList.jsx */}
-        <strong>{props.number}.{props.post.title}</strong>
+        <strong>{props.post.id}.{props.post.title}</strong>
         <div>
           {props.post.body}
         </div>

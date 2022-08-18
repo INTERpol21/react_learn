@@ -19,6 +19,7 @@ import axios from "axios";
 import PostService from "./API/PostService";
 import Loader from "./components/UI/Loader/Loader";
 import { useFetching } from "./hooks/useFetching";
+import { getPageCount, getPagesArray } from "./utils/pages";
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -38,18 +39,32 @@ function App() {
   const [filter, setFilter] = useState({ sort: '', query: '' });
   //состояние видимости окна 
   const [modal, setModal] = useState(false);
+  //Состояние в которое помешаем общее количество постов 
+  const [totalPages, setTotalPages] = useState(0)
+  //лимит постов
+  const [limit,setLimit] = useState(10)
+  //номер страницы
+  const [page,setPage] = useState(1)
   //Кастомные hooks декомпозиция 
   const sortedAndSearchedPosts = usePosts(posts, filter.sort, filter.query);
+  //делаем временную пагинацию страниц
+  let pagesArray = getPagesArray(totalPages);
   //Кастомный хук отвечающий за загрузку и отлов ошибок
-  const [fetchPosts, isPostsLoading, postError] = useFetching(async () => {
-    const posts = await PostService.getAll();
-    setPosts(posts);
-  })
+  const [fetchPosts, isPostsLoading, postError] = useFetching(
+    async (limit, page) => {
+      const response = await PostService.getAll(limit, page);
+      setPosts(response.data);
+      //Обращаемся к jsonplaceholder за headers['x-total-count']
+      const totalCount = response.headers["x-total-count"];
+
+      setTotalPages(getPageCount(totalCount, limit));
+    }
+  );
 
 
-
+ 
   useEffect(() => {
-    fetchPosts()
+    fetchPosts(limit, page);
   }, []);
 
 
@@ -69,10 +84,14 @@ function App() {
   };
   //Сортировка постов по алфавиту (названию и описанию)
 
+  const changePage = (page) => {
+    setPage(page)
+    fetchPosts(limit, page);
+  }
 
   return (
     <div className="App">
-      <button onClick={fetchPosts}>Get posts</button>
+      
       <MyButton style={{ marginTop: 30 }} onClick={() => setModal(true)}>
         Создать пост
       </MyButton>
@@ -83,16 +102,18 @@ function App() {
       {/* Так как нельзя передавать на прямую из дочернего в родителя, создаем callback */}
 
       <hr style={{ margin: "15px 0" }} />
-      <PostFilter filter={filter} setFilter={setFilter}/>
+      <PostFilter filter={filter} setFilter={setFilter} />
 
       {/* Условная отрисовка, что бы при отсутствии постов выпадала надпись//Перенес в PostList  */}
       {/* {sortedAndSearchedPosts.length ? ( */}
       {/* //После выполнения условия, выполняется тернарный оператор ? : */}
-      {postError &&
-        <h1>Произошла ошибка ${postError}</h1>
-      }
+      {postError && <h1>Произошла ошибка ${postError}</h1>}
       {isPostsLoading ? (
-        <div style={{display:'flex', justifyContent:'center', marginTop:50 }}><Loader/></div>
+        <div
+          style={{ display: "flex", justifyContent: "center", marginTop: 50 }}
+        >
+          <Loader />
+        </div>
       ) : (
         //передаем отфильтрованный и отсортированный массив
         <PostList
@@ -105,6 +126,17 @@ function App() {
       {/* ) : (
         <h1 style={{ textAlign: "center" }}>Посты не найдены.</h1>
       )} */}
+      <div className="page__wrapper">
+        {pagesArray.map((p) => (
+
+          <span
+            onClick={() => changePage(p)}
+            key={p}
+            className={page === p ? 'page page__current' : 'page'}>
+        {p}</span>
+        ))}
+      </div>
+      
     </div>
   );
 }

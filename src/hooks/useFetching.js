@@ -6,11 +6,11 @@ export const useFetching = (callback) => {
     //Кейс обработки ошибок
     const [error, setError] = useState('')
 
-    const fetching = async() => {
+    const fetching = async(...args) => {
         try {
             //Делаем состояние true для показа крутилки загрузки
             setIsLoading(true)
-            await callback()
+            await callback(...args);
         } catch (error) {
             //если произошла ошибка
             setError(error.massage)
