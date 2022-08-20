@@ -23,6 +23,10 @@
   border: 5px solid teal;
 }
 
+.post__btns{
+  display: flex;
+}
+
 .post-enter {
   transform: translateX(-400px);
 }
