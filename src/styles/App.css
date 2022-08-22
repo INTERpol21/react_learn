@@ -2,7 +2,10 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  
 }
+
+
 
 #root {
   display: flex;
@@ -20,7 +23,17 @@
   margin-top: 15px;
   justify-content: space-between;
   align-items: center;
-  border: 5px solid teal;
+  /* border: 3px solid teal; */
+  box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.7); 
+  font-size: 20px;
+  
+   
+  
+}
+
+.post:hover{
+  transform: translateY(5px);
+   box-shadow: inset 0px 5px 10px 0px rgba(0, 0, 0, 0.7);
 }
 
 .post__btns{
@@ -59,15 +72,16 @@
   font-weight: bold;
 }
 
-.navbar{
-  height: 50px;
-  width: 100vh;
-  display: flex;
-  align-items: center;
-  padding: 0 15px;
-  background-color: aqua;
+.container{
+  position: relative;
+    height: auto;
+    max-width: 925px;
+    margin: 0px auto;
+    padding: 20px;
 }
 
-.navbar__links{
-  margin-left: auto;
+.text{
+  font-size: 25px;
+  margin: 25px;
+  
 }

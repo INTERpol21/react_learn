@@ -1,6 +1,32 @@
 .myInput {
   width: 100%;
   padding: 5px 15px;
-  margin: 5px 0;
-  border: 1px solid teal;
+  margin: 10px 0;
+  border: 2px solid #bdbdbd;
+  font-size: 20px;
+  
 }
+
+.myInput:hover{
+  color: #212529;
+  background-color: #fff;
+  border-color: #bdbdbd;
+  outline: 2px solid #666;
+  box-shadow: 0 0 0 0.4rem rgba(158, 158, 158, 0.25);
+}
+
+.myInput:focus {
+  color: #212529;
+  background-color: #fff;
+  border-color: #bdbdbd;
+  outline: 1px solid #666;
+  box-shadow: 0 0 0 0.2rem rgba(158, 158, 158, 0.25);
+  
+}
+
+.myInput::placeholder {
+  color: #343146;
+  opacity: 0.5;
+  display: contents;
+}
+

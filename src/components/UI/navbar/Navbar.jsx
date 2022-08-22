@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { AuthContext } from '../../../contexts/context'
 import MyButton from '../button/MyButton';
-
+import classes from "./MyNavbar.module.css";
 
 
 const Navbar = () => {
@@ -14,11 +14,11 @@ const Navbar = () => {
     }
 
   return (
-      <div className="navbar">
+      <div className={classes.navbar}>
           <MyButton onClick={logout}>Выйти</MyButton>
-          <div className="navbar__links">
-              <Link to="/about">О сайте</Link>
-              <Link to="/posts">Посты</Link>
+          <div className={classes.navbar__links} >
+              <Link className={classes.navbar__link} to="/about">О сайте</Link>
+              <Link className={classes.navbar__link} to="/posts">Посты</Link>
           </div>
       </div>
   )
