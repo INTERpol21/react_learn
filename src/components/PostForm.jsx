@@ -42,7 +42,7 @@ const PostForm = ({ create }) => {
                 //Заменяем нужное нам поле title: event.target.value, остальной объект ...posts оставляем не тронутым
                 onChange={(event) => setPost({ ...post, title: event.target.value })}
                 type="text"
-                placeholder="Название поста"
+                placeholder="Название заголовка"
             />
             <MyInput
                 value={post.body}
